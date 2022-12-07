@@ -8,7 +8,7 @@ import "./note.css";
 interface NoteProps {
 	onNoteUpdated: (
 		updatedNoteId: NoteId,
-		updatedNoteDetails: Partial<NoteDetails>
+		updatedNoteDetails: Partial<NoteDetails>,
 	) => void;
 	onRemoveNote: (noteId: NoteId) => void;
 	note: NoteModel;
@@ -18,43 +18,41 @@ export const classNames = {
 	note: "note",
 };
 
-class Note extends React.Component<NoteProps> {
-	onCompleteStatusChange = (newValue: boolean) => {
+export function Note(props: NoteProps): JSX.Element {
+	const { note } = props;
+
+	const onCompleteStatusChange = (newValue: boolean) => {
 		const updatedNoteDetails: Partial<NoteDetails> = {
 			isComplete: newValue,
 		};
-		this.props.onNoteUpdated(this.props.note.id, updatedNoteDetails);
+		props.onNoteUpdated(note.id, updatedNoteDetails);
 	};
 
-	onNoteContentChange = (noteContent: NoteModel["content"]) => {
+	const onNoteContentChange = (noteContent: NoteModel["content"]) => {
 		const updatedNoteDetails: Partial<NoteDetails> = {
 			content: noteContent,
 		};
-		this.props.onNoteUpdated(this.props.note.id, updatedNoteDetails);
+		props.onNoteUpdated(note.id, updatedNoteDetails);
 	};
 
-	onRemoveNote = () => {
-		this.props.onRemoveNote(this.props.note.id);
+	const onRemoveNote = () => {
+		props.onRemoveNote(note.id);
 	};
 
-	render() {
-		const { note } = this.props;
-
-		return (
-			<div className={classNames.note}>
-				<Checkbox
-					isChecked={note.isComplete}
-					onChange={this.onCompleteStatusChange}
-				/>
-				<Textbox
-					defaultValue={note.content}
-					doubleClickToEdit={true}
-					onSubmit={this.onNoteContentChange}
-				/>
-				<Button onClick={this.onRemoveNote}>🗑</Button>
-			</div>
-		);
-	}
+	return (
+		<div className={classNames.note}>
+			<Checkbox
+				isChecked={note.isComplete}
+				onChange={onCompleteStatusChange}
+			/>
+			<Textbox
+				defaultValue={note.content}
+				doubleClickToEdit={true}
+				onSubmit={onNoteContentChange}
+			/>
+			<Button onClick={onRemoveNote}>🗑</Button>
+		</div>
+	);
 }
 
 export default Note;

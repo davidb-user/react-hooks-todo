@@ -1,15 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Note, NoteDetails } from "../../models/note";
 import Checkbox from "../inputs/checkbox/checkbox";
 import Textbox from "../inputs/textbox/textbox";
 import NotesList from "../notesList/notesList";
 import "./app.css";
-
-type AppProps = Record<string, never>;
-
-interface AppState {
-	notes: Note[];
-}
 
 export const classNames = {
 	app: "app",
@@ -19,103 +13,88 @@ export const classNames = {
 	appWrapper: "app-wrapper",
 };
 
-class App extends React.Component<AppProps, AppState> {
-	constructor(props: AppProps) {
-		super(props);
+export function App(): JSX.Element {
+	const [notes, setNotes] = useState<Note[]>([]);
 
-		this.state = {
-			notes: [],
-		};
+	function onNoteUpdated(
+		updatedNoteId: string,
+		updatedNoteDetails: Partial<NoteDetails>,
+	) {
+		if (updatedNoteDetails.content === "") {
+			onRemoveNotes([updatedNoteId]);
+		} else {
+			setNotes(
+				notes.map(note => {
+					return note.id === updatedNoteId
+						? { ...note, ...updatedNoteDetails }
+						: note;
+				}),
+			);
+		}
 	}
 
-	onNoteUpdated = (
-		updatedNoteId: string,
-		updatedNoteDetails: Partial<NoteDetails>
-	) => {
-		if (updatedNoteDetails.content === "") {
-			this.onRemoveNotes([updatedNoteId]);
-		} else {
-			const notes = this.state.notes.map((note) => {
-				return note.id === updatedNoteId
-					? { ...note, ...updatedNoteDetails }
-					: note;
-			});
-			this.setState({
-				notes,
-			});
-		}
-	};
+	function onRemoveNotes(noteIdsToRemove: string[]) {
+		setNotes(
+			notes.filter(note => {
+				return !noteIdsToRemove.includes(note.id);
+			}),
+		);
+	}
 
-	onRemoveNotes = (noteIdsToRemove: string[]) => {
-		const notes = this.state.notes.filter((note) => {
-			return !noteIdsToRemove.includes(note.id);
-		});
-		this.setState({
-			notes,
-		});
-	};
-
-	onSubmitNewNote = (noteContent: string) => {
+	function onSubmitNewNote(noteContent: string) {
 		if (noteContent === "") {
 			return;
 		}
 
 		const newNote = new Note({ content: noteContent, isComplete: false });
-		this.setState((prevState) => ({
-			notes: [...prevState.notes, newNote],
-		}));
-	};
+		setNotes([...notes, newNote]);
+	}
 
-	onToggleCompleteAllChange = () => {
+	function onToggleCompleteAllChange() {
 		const areAllNotesComplete =
-			this.state.notes.length &&
-			this.state.notes.every((note) => note.isComplete);
+			notes.length && notes.every(note => note.isComplete);
 
-		this.setState((prevState) => ({
-			notes: prevState.notes.map((note) => ({
+		setNotes(
+			notes.map(note => ({
 				...note,
 				isComplete: !areAllNotesComplete,
 			})),
-		}));
-	};
-
-	render() {
-		const { notes } = this.state;
-
-		return (
-			<div className={classNames.appWrapper}>
-				<div className={classNames.app}>
-					<h1>TODOS</h1>
-					<div className={classNames.manageNotes}>
-						{notes.length > 0 && (
-							<div className={classNames.toggleCompleteAllNotes}>
-								<Checkbox
-									isChecked={
-										this.state.notes.length &&
-										this.state.notes.every((note) => note.isComplete)
-									}
-									onChange={this.onToggleCompleteAllChange}
-								/>
-							</div>
-						)}
-						<div className={classNames.createNoteContentInput}>
-							<Textbox
-								defaultValue=""
-								onSubmit={this.onSubmitNewNote}
-								clearValueAfterSubmit={true}
-								placeholderText={"Describe here the task to do..."}
-							/>
-						</div>
-					</div>
-					<NotesList
-						notes={notes}
-						onNoteUpdated={this.onNoteUpdated}
-						onRemoveNotes={this.onRemoveNotes}
-					/>
-				</div>
-			</div>
 		);
 	}
+
+	return (
+		<div className={classNames.appWrapper}>
+			<div className={classNames.app}>
+				<h1>TODOS</h1>
+				<div className={classNames.manageNotes}>
+					{notes.length > 0 && (
+						<div className={classNames.toggleCompleteAllNotes}>
+							<Checkbox
+								isChecked={
+									notes.length &&
+									notes.every(note => note.isComplete)
+								}
+								onChange={onToggleCompleteAllChange}
+							/>
+						</div>
+					)}
+					<div className={classNames.createNoteContentInput}>
+						<Textbox
+							defaultValue=""
+							onSubmit={onSubmitNewNote}
+							clearValueAfterSubmit={true}
+							placeholderText={"Describe here the task to do..."}
+						/>
+					</div>
+				</div>
+				<NotesList
+					notes={notes}
+					onNoteUpdated={onNoteUpdated}
+					onRemoveNotes={onRemoveNotes}
+				/>
+			</div>
+		</div>
+	);
 }
 
 export default App;

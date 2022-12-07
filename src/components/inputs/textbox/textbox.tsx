@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import "./textbox.css";
 
 interface TextProps {
@@ -9,97 +9,71 @@ interface TextProps {
 	placeholderText?: string;
 }
 
-interface TextState {
-	editEnabled: boolean;
-	value: string;
-}
+export function Textbox(props: TextProps): JSX.Element {
+	const inputRef = useRef<HTMLInputElement>();
+	const [value, setValue] = useState(props.defaultValue || "");
+	const [editEnabled, setEditEnabled] = useState(!props.doubleClickToEdit);
 
-class Textbox extends React.Component<TextProps, TextState> {
-	private inputRef: HTMLInputElement;
-
-	constructor(props: TextProps) {
-		super(props);
-
-		const editEnabled = this.props.doubleClickToEdit ? false : true;
-
-		this.state = {
-			editEnabled,
-			value: this.props.defaultValue || "",
-		};
-	}
-
-	clearInput = () => {
-		this.setState({ value: "" });
-	};
-
-	onInputDoubleClick = () => {
-		if (this.props.doubleClickToEdit) {
-			this.setState({
-				editEnabled: true,
-			});
+	const onInputDoubleClick = () => {
+		if (props.doubleClickToEdit) {
+			setEditEnabled(true);
 			setTimeout(() => {
-				this.inputRef.focus();
-				this.inputRef.select();
+				if (inputRef.current) {
+					inputRef.current.focus();
+					inputRef.current.select();
+				}
 			});
 		}
 	};
 
-	onSubmit = () => {
-		if (this.props.doubleClickToEdit) {
-			this.setState({
-				editEnabled: false,
-			});
+	const onSubmit = () => {
+		if (props.doubleClickToEdit) {
+			setEditEnabled(false);
 		}
 
-		this.props.onSubmit(this.state.value);
+		props.onSubmit(value);
 
-		if (this.props.clearValueAfterSubmit) {
-			this.setState({ value: "" });
+		if (props.clearValueAfterSubmit) {
+			setValue("");
 		}
 	};
 
-	onKeyDown = (event: React.KeyboardEvent) => {
+	const onKeyDown = (event: React.KeyboardEvent) => {
 		if (event.key === "Enter") {
-			this.onSubmit();
+			onSubmit();
 		}
 	};
 
-	onChange = (newValue: string) => {
-		this.setState({
-			value: newValue,
-		});
+	const onChange = (newValue: string) => {
+		setValue(newValue);
 	};
 
-	render() {
-		const classNames = ["text-input"];
+	const classNames = ["text-input"];
 
-		if (this.props.doubleClickToEdit) {
-			classNames.push("border-on-focus");
-		}
-
-		return (
-			<div
-				className={classNames.join(" ")}
-				onDoubleClick={this.onInputDoubleClick}
-			>
-				<input
-					value={this.state.value}
-					type={"text"}
-					onChange={(e) => {
-						this.onChange(e.target.value);
-					}}
-					onBlur={this.onSubmit}
-					onKeyDown={this.onKeyDown}
-					disabled={!this.state.editEnabled}
-					ref={(ref) => {
-						this.inputRef = ref;
-					}}
-					autoFocus
-					placeholder={this.props.placeholderText}
-				/>
-			</div>
-		);
+	if (props.doubleClickToEdit) {
+		classNames.push("border-on-focus");
 	}
+
+	return (
+		<div
+			className={classNames.join(" ")}
+			onDoubleClick={onInputDoubleClick}
+		>
+			<input
+				value={value}
+				type={"text"}
+				onChange={e => {
+					onChange(e.target.value);
+				}}
+				onBlur={onSubmit}
+				onKeyDown={onKeyDown}
+				disabled={!editEnabled}
+				ref={inputRef}
+				autoFocus
+				placeholder={props.placeholderText}
+			/>
+		</div>
+	);
 }
 
 export default Textbox;

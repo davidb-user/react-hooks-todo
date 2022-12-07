@@ -7,25 +7,23 @@ interface CheckboxProps {
 	onChange(newValue: boolean): void;
 }
 
-class Checkbox extends React.Component<CheckboxProps> {
-	onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		this.props.onChange(event.target.checked);
+export function Checkbox(props: CheckboxProps): JSX.Element {
+	const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		props.onChange(event.target.checked);
 	};
 
-	render() {
-		const { isChecked } = this.props;
-		return (
-			<div className="checkbox-wrapper">
-				<input
-					type={"checkbox"}
-					className="checkbox"
-					checked={isChecked}
-					onChange={this.onChange}
-				/>
-				{isChecked === true && <span className="checkmark">✔️</span>}
-			</div>
-		);
-	}
+	const { isChecked } = props;
+	return (
+		<div className="checkbox-wrapper">
+			<input
+				type={"checkbox"}
+				className="checkbox"
+				checked={isChecked}
+				onChange={onChange}
+			/>
+			{isChecked === true && <span className="checkmark">✔️</span>}
+		</div>
+	);
 }
 
 export default Checkbox;
