@@ -20,7 +20,9 @@ describe("Textbox", () => {
 		describe("value", () => {
 			it("should be setted as input value", () => {
 				const textValue = "textValue";
-				render(<Textbox onSubmit={jest.fn()} defaultValue={textValue} />);
+				render(
+					<Textbox onSubmit={jest.fn()} defaultValue={textValue} />,
+				);
 
 				expect(getInput()).toHaveValue(textValue);
 			});
@@ -29,7 +31,12 @@ describe("Textbox", () => {
 		describe("doubleClickToEdit", () => {
 			describe("equals true", () => {
 				it("should disable text input", async () => {
-					render(<Textbox onSubmit={jest.fn()} doubleClickToEdit={true} />);
+					render(
+						<Textbox
+							onSubmit={jest.fn()}
+							doubleClickToEdit={true}
+						/>,
+					);
 
 					await waitFor(() => {
 						expect(getInput()).toBeDisabled();
@@ -91,7 +98,10 @@ describe("Textbox", () => {
 								const onSubmit = jest.fn();
 								const eventValue = "eventValue";
 								render(
-									<Textbox onSubmit={onSubmit} clearValueAfterSubmit={true} />
+									<Textbox
+										onSubmit={onSubmit}
+										clearValueAfterSubmit={true}
+									/>,
 								);
 
 								await user.type(getInput(), eventValue);
@@ -120,7 +130,10 @@ describe("Textbox", () => {
 								const onSubmit = jest.fn();
 								const eventValue = "eventValue";
 								render(
-									<Textbox onSubmit={onSubmit} doubleClickToEdit={true} />
+									<Textbox
+										onSubmit={onSubmit}
+										doubleClickToEdit={true}
+									/>,
 								);
 
 								await fireEvent.dblClick(getInput());
@@ -128,7 +141,9 @@ describe("Textbox", () => {
 								await user.type(getInput(), "{enter}");
 
 								expect(onSubmit).toHaveBeenCalledTimes(1);
-								expect(onSubmit).toHaveBeenCalledWith(eventValue);
+								expect(onSubmit).toHaveBeenCalledWith(
+									eventValue,
+								);
 							});
 						});
 					});
@@ -138,7 +153,12 @@ describe("Textbox", () => {
 			describe("onBlur", () => {
 				describe("and doubleClickToEdit equals true", () => {
 					it("should disable text input", async () => {
-						render(<Textbox onSubmit={jest.fn()} doubleClickToEdit={true} />);
+						render(
+							<Textbox
+								onSubmit={jest.fn()}
+								doubleClickToEdit={true}
+							/>,
+						);
 
 						await fireEvent.dblClick(getInput());
 						await fireEvent.blur(getInput());
@@ -153,7 +173,12 @@ describe("Textbox", () => {
 			describe("onDoubleClick", () => {
 				describe("and doubleClickToEdit equals true", () => {
 					it("should be enabled", async () => {
-						render(<Textbox onSubmit={jest.fn()} doubleClickToEdit={true} />);
+						render(
+							<Textbox
+								onSubmit={jest.fn()}
+								doubleClickToEdit={true}
+							/>,
+						);
 
 						await fireEvent.dblClick(getInput());
 

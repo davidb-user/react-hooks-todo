@@ -10,25 +10,25 @@ const getApp = (container: HTMLElement) =>
 const getToggleCompleteAllNotes = (container: HTMLElement) => {
 	const toggleCompleteAllNotesWrapper = queryByClassName(
 		container,
-		classNames.toggleCompleteAllNotes
+		classNames.toggleCompleteAllNotes,
 	);
 	if (!toggleCompleteAllNotesWrapper) {
 		return null;
 	}
 	return getQueriesForElement(toggleCompleteAllNotesWrapper).queryByRole(
-		"checkbox"
+		"checkbox",
 	);
 };
 const getCreateNoteContentInput = (container: HTMLElement) =>
 	getQueriesForElement(
-		queryByClassName(container, classNames.createNoteContentInput)
+		queryByClassName(container, classNames.createNoteContentInput),
 	).queryByRole("textbox", {});
 
 async function createNote(
 	user: ReturnType<typeof userEvent["setup"]>,
 	app: HTMLElement,
 	content: string,
-	isCompleted?: boolean
+	isCompleted?: boolean,
 ) {
 	if (!content) {
 		await user.type(await getCreateNoteContentInput(app), "{enter}");
@@ -39,7 +39,7 @@ async function createNote(
 
 	if (isCompleted) {
 		const allCheckboxes = await getQueriesForElement(
-			getNotesList(app)
+			getNotesList(app),
 		).findAllByRole("checkbox");
 
 		// the created note should always be last at the list
@@ -81,7 +81,9 @@ describe("App", () => {
 
 				await createNote(user, app, "content");
 
-				expect(await getToggleCompleteAllNotes(app)).toBeInTheDocument();
+				expect(
+					await getToggleCompleteAllNotes(app),
+				).toBeInTheDocument();
 			});
 
 			describe("no notes", () => {
@@ -99,14 +101,16 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					for (const content of contents) {
 						await createNote(user, app, content);
 					}
 
-					expect(await getToggleCompleteAllNotes(app)).not.toBeChecked();
+					expect(
+						await getToggleCompleteAllNotes(app),
+					).not.toBeChecked();
 				});
 			});
 
@@ -115,15 +119,22 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					let isComplete = false;
 					for (const content of contents) {
-						await createNote(user, app, content, (isComplete = !isComplete));
+						await createNote(
+							user,
+							app,
+							content,
+							(isComplete = !isComplete),
+						);
 					}
 
-					expect(await getToggleCompleteAllNotes(app)).not.toBeChecked();
+					expect(
+						await getToggleCompleteAllNotes(app),
+					).not.toBeChecked();
 				});
 			});
 
@@ -132,7 +143,7 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					for (const content of contents) {
@@ -150,7 +161,9 @@ describe("App", () => {
 
 				const app = getApp(container);
 
-				expect(await getCreateNoteContentInput(app)).toBeInTheDocument();
+				expect(
+					await getCreateNoteContentInput(app),
+				).toBeInTheDocument();
 			});
 		});
 	});
@@ -168,7 +181,7 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					for (const content of contents) {
@@ -178,7 +191,8 @@ describe("App", () => {
 					const rows = getNotes(app);
 
 					for (const note of rows) {
-						const checkbox = getQueriesForElement(note).getByRole("checkbox");
+						const checkbox =
+							getQueriesForElement(note).getByRole("checkbox");
 						expect(checkbox).not.toBeChecked();
 					}
 				});
@@ -189,7 +203,7 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					for (const content of contents) {
@@ -200,7 +214,7 @@ describe("App", () => {
 
 					for (const note of rows) {
 						const checkbox = getQueriesForElement(note).getByRole(
-							"checkbox"
+							"checkbox",
 						) as HTMLInputElement;
 						expect(checkbox).toBeChecked();
 					}
@@ -212,19 +226,24 @@ describe("App", () => {
 					const { container } = render(<App />);
 					const app = getApp(container);
 					const contents = [...Array(10).keys()].map(
-						(index) => `content${index}`
+						index => `content${index}`,
 					);
 
 					let isComplete = false;
 					for (const content of contents) {
-						await createNote(user, app, content, (isComplete = !isComplete));
+						await createNote(
+							user,
+							app,
+							content,
+							(isComplete = !isComplete),
+						);
 					}
 					await user.click(await getToggleCompleteAllNotes(app));
 					const rows = getNotes(app);
 
 					for (const note of rows) {
 						const checkbox = getQueriesForElement(note).getByRole(
-							"checkbox"
+							"checkbox",
 						) as HTMLInputElement;
 						expect(checkbox).toBeChecked();
 					}
@@ -257,14 +276,14 @@ describe("App", () => {
 
 						const rows = getNotes(app);
 						expect(rows).toHaveLength(1);
-						expect(queryBySelector(rows[0], "input[type='text']")).toHaveValue(
-							content
-						);
+						expect(
+							queryBySelector(rows[0], "input[type='text']"),
+						).toHaveValue(content);
 					});
 
 					it(`should add many notes and preserve creation order`, async () => {
 						const contents = [...Array(10).keys()].map(
-							(index) => `content${index}`
+							index => `content${index}`,
 						);
 
 						const { container } = render(<App />);
@@ -277,9 +296,9 @@ describe("App", () => {
 						const rows = getNotes(app);
 						expect(rows).toHaveLength(contents.length);
 						rows.forEach((note, index) => {
-							expect(queryBySelector(note, "input[type='text']")).toHaveValue(
-								contents[index]
-							);
+							expect(
+								queryBySelector(note, "input[type='text']"),
+							).toHaveValue(contents[index]);
 						});
 					});
 
@@ -290,7 +309,9 @@ describe("App", () => {
 
 						await createNote(user, app, content);
 
-						expect(await getCreateNoteContentInput(app)).toHaveValue("");
+						expect(
+							await getCreateNoteContentInput(app),
+						).toHaveValue("");
 					});
 				});
 			});

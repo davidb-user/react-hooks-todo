@@ -1,6 +1,6 @@
 export function queryBySelector<T extends Element>(
 	element: T,
-	selector: string
+	selector: string,
 ): T | null {
 	const elementBySelector = element.querySelector<T>(selector);
 

@@ -24,10 +24,13 @@ const getNoteInfo = (container: HTMLElement) =>
 const getNoteFilterButton = (container: HTMLElement, forFilter: NotesFilter) =>
 	queryBySelector(
 		container,
-		`.${classNames.notesFilterButtons} > .${forFilter} > button`
+		`.${classNames.notesFilterButtons} > .${forFilter} > button`,
 	);
 const getClearCompletedNotesButton = (container: HTMLElement) =>
-	queryBySelector(container, `.${classNames.clearCompletedNotesButton} button`);
+	queryBySelector(
+		container,
+		`.${classNames.clearCompletedNotesButton} button`,
+	);
 
 describe("NotesList", () => {
 	describe("elements", () => {
@@ -38,7 +41,7 @@ describe("NotesList", () => {
 						notes={notesMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNotes={jest.fn()}
-					/>
+					/>,
 				);
 
 				expect(getNotesList(container)).toBeInTheDocument();
@@ -53,7 +56,7 @@ describe("NotesList", () => {
 							notes={[]}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
 					const rows = getNotes(container);
@@ -69,7 +72,7 @@ describe("NotesList", () => {
 							notes={notesMock}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
 					const rows = getNotes(container);
@@ -87,7 +90,7 @@ describe("NotesList", () => {
 							notes={[]}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
 					const noteInfo = getNoteInfo(container);
@@ -110,16 +113,16 @@ describe("NotesList", () => {
 								notes={notes}
 								onNoteUpdated={jest.fn()}
 								onRemoveNotes={jest.fn()}
-							/>
+							/>,
 						);
 
 						const noteInfo = getNoteInfo(container);
 
 						const incompleteNotes = notes.filter(
-							({ isComplete }) => !isComplete
+							({ isComplete }) => !isComplete,
 						);
 						expect(noteInfo.innerHTML).toMatch(
-							new RegExp(`${incompleteNotes.length} items `)
+							new RegExp(`${incompleteNotes.length} items `),
 						);
 					});
 				});
@@ -137,12 +140,14 @@ describe("NotesList", () => {
 								notes={notes}
 								onNoteUpdated={jest.fn()}
 								onRemoveNotes={jest.fn()}
-							/>
+							/>,
 						);
 
 						const noteInfo = getNoteInfo(container);
 
-						expect(noteInfo.innerHTML).toMatch(new RegExp(/0 items /));
+						expect(noteInfo.innerHTML).toMatch(
+							new RegExp(/0 items /),
+						);
 					});
 				});
 
@@ -159,12 +164,14 @@ describe("NotesList", () => {
 								notes={notes}
 								onNoteUpdated={jest.fn()}
 								onRemoveNotes={jest.fn()}
-							/>
+							/>,
 						);
 
 						const noteInfo = getNoteInfo(container);
 
-						expect(noteInfo.innerHTML).toMatch(new RegExp(/1 item /));
+						expect(noteInfo.innerHTML).toMatch(
+							new RegExp(/1 item /),
+						);
 					});
 				});
 			});
@@ -179,13 +186,16 @@ describe("NotesList", () => {
 							notes={notesMock}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
-					const noteFilterButton = getNoteFilterButton(container, filter);
+					const noteFilterButton = getNoteFilterButton(
+						container,
+						filter,
+					);
 
 					expect(noteFilterButton).toBeInTheDocument();
-				}
+				},
 			);
 		});
 
@@ -197,7 +207,7 @@ describe("NotesList", () => {
 							notes={[generateNote({ isComplete: false })]}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
 					const clearCompletedNotesButton =
@@ -209,13 +219,15 @@ describe("NotesList", () => {
 
 			describe("completed notes available", () => {
 				it("should not display button", () => {
-					const notes = [new Note({ content: "content", isComplete: true })];
+					const notes = [
+						new Note({ content: "content", isComplete: true }),
+					];
 					const { container } = render(
 						<NotesList
 							notes={notes}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
 					const clearCompletedNotesButton =
@@ -247,7 +259,7 @@ describe("NotesList", () => {
 								notes={notes}
 								onNoteUpdated={onNoteUpdated}
 								onRemoveNotes={jest.fn()}
-							/>
+							/>,
 						);
 
 						const note = getNotes(container)[0];
@@ -258,9 +270,12 @@ describe("NotesList", () => {
 						await user.type(noteContentInput, "{enter}");
 
 						expect(onNoteUpdated).toHaveBeenCalledTimes(1);
-						expect(onNoteUpdated).toHaveBeenCalledWith(notes[0].id, {
-							content: `${content}${newContent}`,
-						});
+						expect(onNoteUpdated).toHaveBeenCalledWith(
+							notes[0].id,
+							{
+								content: `${content}${newContent}`,
+							},
+						);
 					});
 				});
 
@@ -274,7 +289,7 @@ describe("NotesList", () => {
 								notes={notes}
 								onNoteUpdated={onNoteUpdated}
 								onRemoveNotes={jest.fn()}
-							/>
+							/>,
 						);
 
 						const note = getNotes(container)[0];
@@ -284,9 +299,12 @@ describe("NotesList", () => {
 						await user.click(noteContentInput);
 
 						expect(onNoteUpdated).toHaveBeenCalledTimes(1);
-						expect(onNoteUpdated).toHaveBeenCalledWith(notes[0].id, {
-							isComplete: true,
-						});
+						expect(onNoteUpdated).toHaveBeenCalledWith(
+							notes[0].id,
+							{
+								isComplete: true,
+							},
+						);
 					});
 				});
 			});
@@ -300,7 +318,7 @@ describe("NotesList", () => {
 								notes={[noteMock]}
 								onNoteUpdated={jest.fn()}
 								onRemoveNotes={onRemoveNotes}
-							/>
+							/>,
 						);
 
 						const note = getNotes(container)[0];
@@ -309,7 +327,9 @@ describe("NotesList", () => {
 						await user.click(removeNoteButton);
 
 						expect(onRemoveNotes).toHaveBeenCalledTimes(1);
-						expect(onRemoveNotes).toHaveBeenCalledWith([noteMock.id]);
+						expect(onRemoveNotes).toHaveBeenCalledWith([
+							noteMock.id,
+						]);
 					});
 				});
 			});
@@ -324,19 +344,26 @@ describe("NotesList", () => {
 						generateNote({ isComplete: true }),
 						generateNote({ isComplete: true }),
 					];
-					const completedNotes = notes.filter((note) => note.isComplete);
+					const completedNotes = notes.filter(
+						note => note.isComplete,
+					);
 					const { container } = render(
 						<NotesList
 							notes={notes}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
-					const noteFilterButton = getNoteFilterButton(container, filter);
+					const noteFilterButton = getNoteFilterButton(
+						container,
+						filter,
+					);
 					await user.click(noteFilterButton);
 
-					expect(getNotes(container)).toHaveLength(completedNotes.length);
+					expect(getNotes(container)).toHaveLength(
+						completedNotes.length,
+					);
 				});
 
 				it("should filter according to active filter", async () => {
@@ -346,19 +373,24 @@ describe("NotesList", () => {
 						generateNote({ isComplete: false }),
 						generateNote({ isComplete: true }),
 					];
-					const activeNotes = notes.filter((note) => !note.isComplete);
+					const activeNotes = notes.filter(note => !note.isComplete);
 					const { container } = render(
 						<NotesList
 							notes={notes}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
-					const noteFilterButton = getNoteFilterButton(container, filter);
+					const noteFilterButton = getNoteFilterButton(
+						container,
+						filter,
+					);
 					await user.click(noteFilterButton);
 
-					expect(getNotes(container)).toHaveLength(activeNotes.length);
+					expect(getNotes(container)).toHaveLength(
+						activeNotes.length,
+					);
 				});
 
 				it("should filter according to all filter", async () => {
@@ -373,10 +405,13 @@ describe("NotesList", () => {
 							notes={notes}
 							onNoteUpdated={jest.fn()}
 							onRemoveNotes={jest.fn()}
-						/>
+						/>,
 					);
 
-					const noteFilterButton = getNoteFilterButton(container, filter);
+					const noteFilterButton = getNoteFilterButton(
+						container,
+						filter,
+					);
 					await user.click(noteFilterButton);
 
 					expect(getNotes(container)).toHaveLength(notes.length);
@@ -394,22 +429,24 @@ describe("NotesList", () => {
 							new Note({ content: "content", isComplete: false }),
 						];
 						const completedNoteIds = notes
-							.filter((note) => note.isComplete)
-							.map((note) => note.id);
+							.filter(note => note.isComplete)
+							.map(note => note.id);
 						const onRemoveNotes = jest.fn();
 						const { container } = render(
 							<NotesList
 								notes={notes}
 								onNoteUpdated={jest.fn()}
 								onRemoveNotes={onRemoveNotes}
-							/>
+							/>,
 						);
 
 						const clearCompletedNotesButton =
 							getClearCompletedNotesButton(container);
 						await user.click(clearCompletedNotesButton);
 
-						expect(onRemoveNotes).toHaveBeenCalledWith(completedNoteIds);
+						expect(onRemoveNotes).toHaveBeenCalledWith(
+							completedNoteIds,
+						);
 					});
 				});
 			});

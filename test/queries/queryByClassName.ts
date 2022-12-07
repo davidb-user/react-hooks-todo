@@ -1,6 +1,6 @@
 export function queryByClassName<T extends Element>(
 	element: T,
-	className: string
+	className: string,
 ): T | null {
 	const elementsWithClassName = element.querySelector<T>(`.${className}`);
 

@@ -20,7 +20,7 @@ describe("Note", () => {
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
-					/>
+					/>,
 				);
 
 				expect(getNote(container)).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe("Note", () => {
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
-					/>
+					/>,
 				);
 
 				expect(getNoteCompletionStatusInput()).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("Note", () => {
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
-					/>
+					/>,
 				);
 
 				expect(getNoteContentInput()).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("Note", () => {
 						note={noteMock}
 						onNoteUpdated={jest.fn()}
 						onRemoveNote={jest.fn()}
-					/>
+					/>,
 				);
 
 				expect(getRemoveNoteButton()).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe("Note", () => {
 			describe("onChange", () => {
 				describe.each([true, false])(
 					"note is complete status equals %s",
-					(isComplete) => {
+					isComplete => {
 						it(`should call props onChange with ${!isComplete} value`, async () => {
 							const onNoteUpdated = jest.fn();
 							const note = generateNote({ isComplete });
@@ -90,17 +90,20 @@ describe("Note", () => {
 									note={note}
 									onNoteUpdated={onNoteUpdated}
 									onRemoveNote={jest.fn()}
-								/>
+								/>,
 							);
 
 							await user.click(getNoteCompletionStatusInput());
 
 							expect(onNoteUpdated).toHaveBeenCalledTimes(1);
-							expect(onNoteUpdated).toHaveBeenCalledWith(note.id, {
-								isComplete: !isComplete,
-							});
+							expect(onNoteUpdated).toHaveBeenCalledWith(
+								note.id,
+								{
+									isComplete: !isComplete,
+								},
+							);
 						});
-					}
+					},
 				);
 			});
 		});
@@ -117,7 +120,7 @@ describe("Note", () => {
 							note={note}
 							onNoteUpdated={onNoteUpdated}
 							onRemoveNote={jest.fn()}
-						/>
+						/>,
 					);
 
 					await fireEvent.dblClick(getNoteContentInput());
@@ -141,7 +144,7 @@ describe("Note", () => {
 							note={noteMock}
 							onNoteUpdated={jest.fn()}
 							onRemoveNote={onRemoveNote}
-						/>
+						/>,
 					);
 
 					await user.click(getRemoveNoteButton());
